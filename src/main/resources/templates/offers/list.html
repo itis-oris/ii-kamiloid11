@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/main}">
+<head><title>Объявления о навыках</title></head>
+<body>
+<section layout:fragment="content">
+    <div class="page-header">
+        <h1>Объявления о навыках</h1>
+        <a th:href="@{/offers/create}" class="knopka knopka-osnovnaya" sec:authorize="isAuthenticated()">+ Новое объявление</a>
+    </div>
+
+    <div class="polosa-poiska">
+        <input type="text" id="searchInput" placeholder="Поиск по объявлениям..."
+               class="pole-vvoda pole-poiska"
+               data-skillswap-filter="keyword"
+               aria-label="Поиск по объявлениям"/>
+        <select id="categoryFilter" class="pole-vvoda">
+            <option value="">Все категории</option>
+            <option th:each="cat : ${categories}" th:value="${cat}" th:text="${cat}"></option>
+        </select>
+        <select id="levelFilter" class="pole-vvoda">
+            <option value="">Любой уровень</option>
+            <option th:each="lvl : ${levels}" th:value="${lvl}" th:text="${lvl}"></option>
+        </select>
+    </div>
+
+    <div id="offersGrid" class="setka-obyavleniy">
+        <th:block th:each="offer : ${offers.content}">
+            <div th:replace="~{fragments/offer-card :: offerCard(${offer})}"></div>
+        </th:block>
+    </div>
+
+    <div th:if="${offers.content.isEmpty()}" class="pusto-sostoyanie" id="emptyState">
+        <p>Объявлений пока нет. Будь первым, опубликуй своё!</p>
+    </div>
+
+    <div th:replace="~{fragments/pagination :: postranichnaya(${offers}, '/offers')}"></div>
+</section>
+
+<script layout:fragment="scripts" th:inline="javascript">
+    initOfferSearch();
+</script>
+</body>
+</html>

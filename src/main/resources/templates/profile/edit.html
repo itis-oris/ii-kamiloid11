@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/main}">
+<head><title>Редактирование профиля</title></head>
+<body>
+<section layout:fragment="content">
+    <div class="konteyner-formy">
+        <h2>Редактирование профиля</h2>
+        <form th:action="@{/profile/edit}" th:object="${form}" method="post" class="form">
+            <div class="ryad-polya">
+                <div class="gruppa-polya">
+                    <label for="firstName">Имя</label>
+                    <input type="text" id="firstName" th:field="*{firstName}" class="pole-vvoda"/>
+                </div>
+                <div class="gruppa-polya">
+                    <label for="lastName">Фамилия</label>
+                    <input type="text" id="lastName" th:field="*{lastName}" class="pole-vvoda"/>
+                </div>
+            </div>
+            <div class="gruppa-polya">
+                <label for="bio">О себе</label>
+                <textarea id="bio" th:field="*{bio}" class="pole-vvoda" rows="4"></textarea>
+            </div>
+            <div class="gruppa-polya">
+                <label for="avatarUrl">Ссылка на аватар</label>
+                <input type="url" id="avatarUrl" th:field="*{avatarUrl}" class="pole-vvoda"
+                       placeholder="https://example.com/avatar.jpg"/>
+            </div>
+            <div class="deystviya-formy">
+                <button type="submit" class="knopka knopka-osnovnaya">Сохранить изменения</button>
+                <a th:href="@{/profile/{u}(u=${#authentication.name})}" class="knopka knopka-konturnaya">Отмена</a>
+            </div>
+        </form>
+    </div>
+</section>
+</body>
+</html>

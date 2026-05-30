@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/main}">
+<head><title th:text="${editMode} ? 'Редактирование объявления' : 'Создание объявления'">Форма объявления</title></head>
+<body>
+<section layout:fragment="content">
+    <div class="konteyner-formy">
+        <h2 th:text="${editMode} ? 'Редактирование объявления' : 'Создание нового объявления'">Форма объявления</h2>
+        <form th:action="${editMode} ? @{/offers/{id}(id=${offerId})} : @{/offers}"
+              th:object="${form}" method="post" class="form">
+
+            <div class="gruppa-polya">
+                <label for="title">Заголовок *</label>
+                <input type="text" id="title" th:field="*{title}" class="pole-vvoda"
+                       th:classappend="${#fields.hasErrors('title')} ? 'is-invalid'"/>
+                <span class="error" th:if="${#fields.hasErrors('title')}" th:errors="*{title}"></span>
+            </div>
+
+            <div class="gruppa-polya">
+                <label for="description">Описание</label>
+                <textarea id="description" th:field="*{description}" class="pole-vvoda" rows="5"></textarea>
+                <span class="error" th:if="${#fields.hasErrors('description')}" th:errors="*{description}"></span>
+            </div>
+
+            <div class="gruppa-polya">
+                <label for="skillId">Навык *</label>
+                <select id="skillId" th:field="*{skillId}" class="pole-vvoda"
+                        th:classappend="${#fields.hasErrors('skillId')} ? 'is-invalid'">
+                    <option value="">-- Выберите навык --</option>
+                    <option th:each="skill : ${skills}" th:value="${skill.id}"
+                            th:text="${skill.title + ' (' + skill.category + ' - ' + skill.level + ')'}"></option>
+                </select>
+                <span class="error" th:if="${#fields.hasErrors('skillId')}" th:errors="*{skillId}"></span>
+            </div>
+
+            <div class="ryad-polya">
+                <div class="gruppa-polya">
+                    <label for="hoursPerSession">Часов на занятие *</label>
+                    <input type="number" id="hoursPerSession" th:field="*{hoursPerSession}"
+                           step="0.5" min="0.5" max="8" class="pole-vvoda"
+                           th:classappend="${#fields.hasErrors('hoursPerSession')} ? 'is-invalid'"/>
+                    <span class="error" th:if="${#fields.hasErrors('hoursPerSession')}" th:errors="*{hoursPerSession}"></span>
+                </div>
+                <div class="gruppa-polya">
+                    <label for="maxStudents">Макс. число учеников *</label>
+                    <input type="number" id="maxStudents" th:field="*{maxStudents}"
+                           min="1" max="20" class="pole-vvoda"
+                           th:classappend="${#fields.hasErrors('maxStudents')} ? 'is-invalid'"/>
+                    <span class="error" th:if="${#fields.hasErrors('maxStudents')}" th:errors="*{maxStudents}"></span>
+                </div>
+            </div>
+
+            <div class="ryad-polya">
+                <div class="gruppa-polya">
+                    <label for="hourlyRate">Стоимость часа (необязательно)</label>
+                    <input type="number" id="hourlyRate" th:field="*{hourlyRate}"
+                           step="0.01" min="0" class="pole-vvoda"/>
+                </div>
+                <div class="gruppa-polya">
+                    <label for="rateCurrency">Валюта</label>
+                    <select id="rateCurrency" th:field="*{rateCurrency}" class="pole-vvoda">
+                        <option value="EUR">EUR</option>
+                        <option value="USD">USD</option>
+                        <option value="GBP">GBP</option>
+                        <option value="RUB">RUB</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="deystviya-formy">
+                <button type="submit" class="knopka knopka-osnovnaya" th:text="${editMode} ? 'Сохранить изменения' : 'Опубликовать'">Отправить</button>
+                <a th:href="${editMode} ? @{/offers/{id}(id=${offerId})} : @{/offers}" class="knopka knopka-konturnaya">Отмена</a>
+            </div>
+        </form>
+    </div>
+</section>
+</body>
+</html>

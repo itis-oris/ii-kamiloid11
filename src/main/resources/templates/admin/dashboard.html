@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/admin}">
+<head><title>Сводка</title></head>
+<body>
+<section layout:fragment="content">
+    <h2>Сводка</h2>
+    <div class="stats-grid">
+        <div class="stat-card">
+            <h3 th:text="${userCount}">0</h3>
+            <p>Зарегистрированных пользователей</p>
+        </div>
+        <div class="stat-card">
+            <h3 th:text="${offerCount}">0</h3>
+            <p>Активных объявлений</p>
+        </div>
+    </div>
+</section>
+</body>
+</html>

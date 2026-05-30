@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/main}">
+<head><title>Ошибка сервера</title></head>
+<body>
+<section layout:fragment="content">
+    <div class="error-page">
+        <h1 class="error-code">500</h1>
+        <h2>Что-то пошло не так</h2>
+        <p th:text="${message ?: 'Произошла непредвиденная ошибка. Попробуйте позже.'}">Ошибка</p>
+        <a th:href="@{/}" class="knopka knopka-osnovnaya">На главную</a>
+    </div>
+</section>
+</body>
+</html>

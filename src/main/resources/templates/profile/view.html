@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      xmlns:ss="http://www.skillswap.com/dialect"
+      layout:decorate="~{layout/main}">
+<head><title th:text="${user.username}">Профиль</title></head>
+<body>
+<section layout:fragment="content">
+    <div class="profile-header">
+        <div class="profile-avatar">
+            <img th:if="${user.avatarUrl != null}" th:src="${user.avatarUrl}" alt="Аватар"/>
+            <div th:unless="${user.avatarUrl != null}" class="avatar-placeholder"
+                 th:text="${#strings.substring(user.username, 0, 1).toUpperCase()}">U</div>
+        </div>
+        <div class="profile-info">
+            <h1 th:text="${user.firstName != null ? user.firstName + ' ' + user.lastName : user.username}">Имя</h1>
+            <p class="profile-username">@<span th:text="${user.username}">логин</span></p>
+            <div ss:rating-stars="${user.averageRating}">Рейтинг</div>
+            <p th:if="${user.bio != null}" th:text="${user.bio}" class="profile-bio"></p>
+            <p class="profile-date">На платформе с <span th:text="${#temporals.format(user.createdAt, 'MMMM yyyy')}">янв 2026</span></p>
+        </div>
+        <div sec:authorize="isAuthenticated()" th:if="${#authentication.name == user.username}">
+            <a th:href="@{/profile/edit}" class="knopka knopka-konturnaya">Редактировать профиль</a>
+        </div>
+    </div>
+
+    <section th:if="${!offers.isEmpty()}">
+        <h2>Объявления пользователя</h2>
+        <div class="setka-obyavleniy">
+            <th:block th:each="offer : ${offers}">
+                <div th:replace="~{fragments/offer-card :: offerCard(${offer})}"></div>
+            </th:block>
+        </div>
+    </section>
+
+    <section th:if="${!reviews.isEmpty()}">
+        <h2>Отзывы</h2>
+        <div class="reviews-list">
+            <div th:each="review : ${reviews}" class="review-card">
+                <div class="review-header">
+                    <span ss:rating-stars="${review.rating}">Рейтинг</span>
+                    <span class="review-author">от
+                        <a th:href="@{/profile/{u}(u=${review.authorUsername})}" th:text="${review.authorUsername}">автор</a>
+                    </span>
+                    <span class="review-date" th:text="${#temporals.format(review.createdAt, 'dd MMM yyyy')}">Дата</span>
+                </div>
+                <p th:if="${review.comment != null}" th:text="${review.comment}" class="review-comment"></p>
+            </div>
+        </div>
+    </section>
+</section>
+</body>
+</html>

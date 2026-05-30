@@ -1,0 +1,75 @@
+### Get all offers
+GET http://localhost:8080/api/offers
+Accept: application/json
+
+### Get all offers with pagination
+GET http://localhost:8080/api/offers?page=0&size=5
+Accept: application/json
+
+### Search offers by keyword
+GET http://localhost:8080/api/offers?keyword=python
+Accept: application/json
+
+### Search offers by category
+GET http://localhost:8080/api/offers?category=PROGRAMMING
+Accept: application/json
+
+### Search offers by category and level
+GET http://localhost:8080/api/offers?category=LANGUAGES&level=BEGINNER
+Accept: application/json
+
+### Get offer by id
+GET http://localhost:8080/api/offers/1
+Accept: application/json
+
+### Get offer by id (not found)
+GET http://localhost:8080/api/offers/999
+Accept: application/json
+
+### Create offer (requires authentication - use session cookie)
+POST http://localhost:8080/api/offers
+Content-Type: application/json
+
+{
+  "title": "JavaScript Basics",
+  "description": "Learn JavaScript from scratch: variables, functions, DOM manipulation, and modern ES6+ features.",
+  "hoursPerSession": 1.5,
+  "hourlyRate": 20.0,
+  "rateCurrency": "EUR",
+  "maxStudents": 4,
+  "skillId": 1
+}
+
+### Update offer (requires authentication)
+PUT http://localhost:8080/api/offers/1
+Content-Type: application/json
+
+{
+  "title": "Python for Beginners - Updated",
+  "description": "Updated description: Learn Python programming from scratch. Covers variables, loops, functions, OOP, and now includes data structures.",
+  "hoursPerSession": 2.0,
+  "hourlyRate": 30.0,
+  "rateCurrency": "EUR",
+  "maxStudents": 5,
+  "skillId": 1
+}
+
+### Delete offer (requires authentication)
+DELETE http://localhost:8080/api/offers/1
+
+### Convert currency
+GET http://localhost:8080/api/currency/convert?amount=25&from=EUR&to=USD
+Accept: application/json
+
+### Get all rates
+GET http://localhost:8080/api/currency/rates?base=EUR
+Accept: application/json
+
+### Send exchange request (requires authentication)
+POST http://localhost:8080/api/exchanges/request
+Content-Type: application/json
+
+{
+  "offerId": 1,
+  "message": "I would like to exchange Python lessons for guitar lessons!"
+}

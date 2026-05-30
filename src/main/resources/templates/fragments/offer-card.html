@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:ss="http://www.skillswap.com/dialect">
+<body>
+<article th:fragment="offerCard(offer)" class="kartochka-obyavleniya">
+    <div class="kartochka-obyavleniya-shapka">
+        <span class="metka" th:text="${offer.skillCategory}" th:classappend="${'badge-' + offer.skillCategory.toLowerCase()}"></span>
+        <span class="metka badge-level" th:text="${offer.skillLevel}"></span>
+    </div>
+    <h3 class="kartochka-obyavleniya-zagolovok">
+        <a th:href="@{/offers/{id}(id=${offer.id})}" th:text="${offer.title}">Название</a>
+    </h3>
+    <p class="kartochka-obyavleniya-opisanie" th:text="${#strings.abbreviate(offer.description, 120)}">Описание...</p>
+    <div class="kartochka-obyavleniya-meta">
+        <span>
+            <a th:href="@{/profile/{u}(u=${offer.ownerUsername})}" th:text="${offer.ownerUsername}">автор</a>
+        </span>
+        <span ss:rating-stars="${offer.ownerRating}">Рейтинг</span>
+    </div>
+    <div class="kartochka-obyavleniya-podval">
+        <span th:if="${offer.hourlyRate != null}" class="offer-price">
+            <span th:text="${offer.hourlyRate}">0</span>
+            <span th:text="${offer.rateCurrency}">EUR</span>/час
+        </span>
+        <span th:unless="${offer.hourlyRate != null}" class="offer-price free">Бартер без оплаты</span>
+        <span class="offer-meta" th:text="${offer.hoursPerSession} + ' ч / занятие'">1 ч / занятие</span>
+    </div>
+</article>
+</body>
+</html>

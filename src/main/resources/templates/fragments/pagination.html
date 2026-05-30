@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+<nav th:fragment="postranichnaya(page, url)" class="postranichnaya" th:if="${page.totalPages > 1}">
+    <a th:href="@{${url}(page=${page.number - 1})}"
+       th:classappend="${page.first} ? 'disabled'"
+       class="postranichnaya-ssylka">&laquo; Назад</a>
+    <span th:each="i : ${#numbers.sequence(0, page.totalPages - 1)}">
+        <a th:href="@{${url}(page=${i})}"
+           th:text="${i + 1}"
+           th:classappend="${i == page.number} ? 'active'"
+           class="postranichnaya-ssylka"></a>
+    </span>
+    <a th:href="@{${url}(page=${page.number + 1})}"
+       th:classappend="${page.last} ? 'disabled'"
+       class="postranichnaya-ssylka">Вперёд &raquo;</a>
+</nav>
+</body>
+</html>
