@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/main}">
+<head><title>Регистрация</title></head>
+<body>
+<section layout:fragment="content">
+    <div class="konteyner-vhoda">
+        <h2>Создание аккаунта</h2>
+        <form th:action="@{/auth/register}" th:object="${form}" method="post" class="form">
+            <div class="gruppa-polya">
+                <label for="username">Логин *</label>
+                <input type="text" id="username" th:field="*{username}" class="pole-vvoda"
+                       th:classappend="${#fields.hasErrors('username')} ? 'is-invalid'"/>
+                <span class="error" th:if="${#fields.hasErrors('username')}" th:errors="*{username}"></span>
+            </div>
+            <div class="gruppa-polya">
+                <label for="email">Электронная почта *</label>
+                <input type="email" id="email" th:field="*{email}" class="pole-vvoda"
+                       th:classappend="${#fields.hasErrors('email')} ? 'is-invalid'"/>
+                <span class="error" th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></span>
+            </div>
+            <div class="ryad-polya">
+                <div class="gruppa-polya">
+                    <label for="firstName">Имя</label>
+                    <input type="text" id="firstName" th:field="*{firstName}" class="pole-vvoda"/>
+                </div>
+                <div class="gruppa-polya">
+                    <label for="lastName">Фамилия</label>
+                    <input type="text" id="lastName" th:field="*{lastName}" class="pole-vvoda"/>
+                </div>
+            </div>
+            <div class="gruppa-polya">
+                <label for="password">Пароль *</label>
+                <input type="password" id="password" th:field="*{password}" class="pole-vvoda"
+                       th:classappend="${#fields.hasErrors('password')} ? 'is-invalid'"/>
+                <span class="error" th:if="${#fields.hasErrors('password')}" th:errors="*{password}"></span>
+            </div>
+            <div class="gruppa-polya">
+                <label for="confirmPassword">Подтверждение пароля *</label>
+                <input type="password" id="confirmPassword" th:field="*{confirmPassword}" class="pole-vvoda"
+                       th:classappend="${#fields.hasErrors('confirmPassword')} ? 'is-invalid'"/>
+                <span class="error" th:if="${#fields.hasErrors('confirmPassword')}" th:errors="*{confirmPassword}"></span>
+            </div>
+            <button type="submit" class="knopka knopka-osnovnaya knopka-shirokaya">Зарегистрироваться</button>
+        </form>
+        <p class="ssylka-vhoda">Уже есть аккаунт? <a th:href="@{/auth/login}">Войти</a></p>
+    </div>
+</section>
+</body>
+</html>

@@ -1,0 +1,11 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+<div th:fragment="alerts">
+    <div th:if="${success}" class="uvedomlenie uvedomlenie-uspeh" th:text="${success}"></div>
+    <div th:if="${error}" class="uvedomlenie uvedomlenie-oshibka" th:text="${error}"></div>
+    <div th:if="${param.error}" class="uvedomlenie uvedomlenie-oshibka">Неверный логин или пароль.</div>
+    <div th:if="${param.logout}" class="uvedomlenie uvedomlenie-uspeh">Вы успешно вышли из аккаунта.</div>
+</div>
+</body>
+</html>

@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<body>
+<header th:fragment="navbar">
+    <nav class="navbar">
+        <div class="container nav-container">
+            <a th:href="@{/}" class="nav-brand">SkillSwap</a>
+            <button class="nav-toggle" onclick="document.querySelector('.nav-menu').classList.toggle('active')" aria-label="Открыть меню">&#9776;</button>
+            <ul class="nav-menu">
+                <li><a th:href="@{/offers}">Объявления</a></li>
+                <li sec:authorize="isAuthenticated()"><a th:href="@{/offers/create}">Создать объявление</a></li>
+                <li sec:authorize="isAuthenticated()"><a th:href="@{/exchanges}">Мои обмены</a></li>
+                <li sec:authorize="hasRole('ADMIN')"><a th:href="@{/admin}">Админка</a></li>
+                <li sec:authorize="isAuthenticated()">
+                    <a th:href="@{/profile/{u}(u=${#authentication.name})}">
+                        <span sec:authentication="name">Пользователь</span>
+                    </a>
+                </li>
+                <li sec:authorize="isAuthenticated()">
+                    <form th:action="@{/auth/logout}" method="post" class="nav-logout-form">
+                        <button type="submit" class="knopka knopka-konturnaya knopka-malaya">Выйти</button>
+                    </form>
+                </li>
+                <li sec:authorize="!isAuthenticated()"><a th:href="@{/auth/login}" class="knopka knopka-osnovnaya knopka-malaya" data-skillswap-nav="login" aria-label="Войти в аккаунт">Войти</a></li>
+                <li sec:authorize="!isAuthenticated()"><a th:href="@{/auth/register}" class="knopka knopka-konturnaya knopka-malaya" data-skillswap-nav="register" aria-label="Зарегистрироваться">Регистрация</a></li>
+            </ul>
+        </div>
+    </nav>
+</header>
+</body>
+</html>

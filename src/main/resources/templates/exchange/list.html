@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/main}">
+<head><title>Мои обмены</title></head>
+<body>
+<section layout:fragment="content">
+    <h1>Мои обмены</h1>
+
+    <section th:if="${!incoming.isEmpty()}">
+        <h2>Входящие заявки</h2>
+        <div class="requests-list">
+            <div th:each="req : ${incoming}" class="request-card">
+                <div class="request-info">
+                    <h4>
+                        <a th:href="@{/profile/{u}(u=${req.requesterUsername})}" th:text="${req.requesterUsername}">пользователь</a>
+                        хочет обменяться по объявлению
+                        <a th:href="@{/offers/{id}(id=${req.offerId})}" th:text="${req.offerTitle}">объявление</a>
+                    </h4>
+                    <p th:if="${req.message}" th:text="${req.message}" class="request-message"></p>
+                    <span class="metka" th:text="${req.status}"
+                          th:classappend="${'badge-' + req.status.toLowerCase()}"></span>
+                    <span class="request-date" th:text="${#temporals.format(req.createdAt, 'dd MMM yyyy HH:mm')}"></span>
+                </div>
+                <div class="request-actions" th:if="${req.status == 'PENDING'}">
+                    <form th:action="@{/exchanges/request/{id}/accept(id=${req.id})}" method="post" style="display:inline">
+                        <button type="submit" class="knopka knopka-osnovnaya knopka-malaya">Принять</button>
+                    </form>
+                    <form th:action="@{/exchanges/request/{id}/reject(id=${req.id})}" method="post" style="display:inline">
+                        <button type="submit" class="knopka knopka-opasnaya knopka-malaya">Отклонить</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section th:if="${!outgoing.isEmpty()}">
+        <h2>Мои заявки</h2>
+        <div class="requests-list">
+            <div th:each="req : ${outgoing}" class="request-card">
+                <div class="request-info">
+                    <h4>Заявка по объявлению <a th:href="@{/offers/{id}(id=${req.offerId})}" th:text="${req.offerTitle}">объявление</a></h4>
+                    <p th:if="${req.message}" th:text="${req.message}" class="request-message"></p>
+                    <span class="metka" th:text="${req.status}"
+                          th:classappend="${'badge-' + req.status.toLowerCase()}"></span>
+                    <span class="request-date" th:text="${#temporals.format(req.createdAt, 'dd MMM yyyy HH:mm')}"></span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section th:if="${!exchanges.isEmpty()}">
+        <h2>Состоявшиеся обмены</h2>
+        <div class="exchanges-list">
+            <div th:each="ex : ${exchanges}" class="exchange-card">
+                <h4><a th:href="@{/exchanges/{id}(id=${ex.id})}" th:text="${ex.offerTitle}">Обмен</a></h4>
+                <p>Между <strong th:text="${ex.ownerUsername}">автор</strong>
+                   и <strong th:text="${ex.requesterUsername}">заявитель</strong></p>
+                <span th:if="${ex.completedAt != null}" class="metka badge-completed">Завершён</span>
+                <span th:unless="${ex.completedAt != null}" class="metka badge-pending">В процессе</span>
+            </div>
+        </div>
+    </section>
+
+    <div th:if="${incoming.isEmpty() && outgoing.isEmpty() && exchanges.isEmpty()}" class="pusto-sostoyanie">
+        <p>Обменов пока нет. <a th:href="@{/offers}">Загляните в каталог объявлений</a>, чтобы начать!</p>
+    </div>
+</section>
+</body>
+</html>

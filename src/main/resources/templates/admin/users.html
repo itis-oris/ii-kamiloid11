@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/admin}">
+<head><title>Пользователи</title></head>
+<body>
+<section layout:fragment="content">
+    <h2>Управление пользователями</h2>
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Логин</th>
+                <th>Почта</th>
+                <th>Имя</th>
+                <th>Активен</th>
+                <th>Роли</th>
+                <th>Рейтинг</th>
+                <th>Действия</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="user : ${users}">
+                <td th:text="${user.id}">1</td>
+                <td><a th:href="@{/profile/{u}(u=${user.username})}" th:text="${user.username}">пользователь</a></td>
+                <td th:text="${user.email}">почта</td>
+                <td th:text="${(user.firstName ?: '') + ' ' + (user.lastName ?: '')}">Имя</td>
+                <td>
+                    <span th:if="${user.isActive}" class="metka badge-completed">Активен</span>
+                    <span th:unless="${user.isActive}" class="metka badge-rejected">Заблокирован</span>
+                </td>
+                <td th:text="${#strings.listJoin(user.roles, ', ')}">ROLE_USER</td>
+                <td th:text="${#numbers.formatDecimal(user.averageRating, 1, 1)}">0.0</td>
+                <td>
+                    <form th:action="@{/admin/users/{id}/toggle(id=${user.id})}" method="post" style="display:inline">
+                        <button type="submit" class="knopka knopka-malaya"
+                                th:classappend="${user.isActive} ? 'knopka-opasnaya' : 'knopka-osnovnaya'"
+                                th:text="${user.isActive} ? 'Заблокировать' : 'Активировать'">Переключить</button>
+                    </form>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</section>
+</body>
+</html>

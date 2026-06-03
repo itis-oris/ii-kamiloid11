@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/main}">
+<head><title>Вход</title></head>
+<body>
+<section layout:fragment="content">
+    <div class="konteyner-vhoda">
+        <h2>Вход в систему</h2>
+        <form th:action="@{/auth/login}" method="post" class="form">
+            <div class="gruppa-polya">
+                <label for="username">Логин</label>
+                <input type="text" id="username" name="username" required autofocus class="pole-vvoda"/>
+            </div>
+            <div class="gruppa-polya">
+                <label for="password">Пароль</label>
+                <input type="password" id="password" name="password" required class="pole-vvoda"/>
+            </div>
+            <button type="submit" class="knopka knopka-osnovnaya knopka-shirokaya">Войти</button>
+        </form>
+        <p class="ssylka-vhoda">Ещё нет аккаунта? <a th:href="@{/auth/register}">Зарегистрироваться</a></p>
+    </div>
+</section>
+</body>
+</html>

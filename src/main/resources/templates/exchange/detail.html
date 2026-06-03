@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:ss="http://www.skillswap.com/dialect"
+      layout:decorate="~{layout/main}">
+<head><title>Детали обмена</title></head>
+<body>
+<section layout:fragment="content">
+    <h1>Обмен: <span th:text="${exchange.offerTitle}">Название</span></h1>
+
+    <div class="exchange-detail">
+        <div class="exchange-info-grid">
+            <div class="info-item">
+                <strong>Участники</strong>
+                <p><a th:href="@{/profile/{u}(u=${exchange.ownerUsername})}" th:text="${exchange.ownerUsername}">автор</a>
+                   &harr;
+                   <a th:href="@{/profile/{u}(u=${exchange.requesterUsername})}" th:text="${exchange.requesterUsername}">заявитель</a></p>
+            </div>
+            <div class="info-item">
+                <strong>Запланировано на</strong>
+                <p th:text="${exchange.scheduledAt != null ? #temporals.format(exchange.scheduledAt, 'dd MMM yyyy HH:mm') : 'не назначено'}"></p>
+            </div>
+            <div class="info-item">
+                <strong>Длительность</strong>
+                <p th:text="${exchange.durationMinutes != null ? exchange.durationMinutes + ' мин' : 'не назначено'}"></p>
+            </div>
+            <div class="info-item">
+                <strong>Статус</strong>
+                <span th:if="${exchange.completedAt != null}" class="metka badge-completed">Завершён</span>
+                <span th:unless="${exchange.completedAt != null}" class="metka badge-pending">В процессе</span>
+            </div>
+        </div>
+
+        <div th:if="${exchange.notes}" class="exchange-notes">
+            <h3>Заметки</h3>
+            <p th:text="${exchange.notes}"></p>
+        </div>
+
+        <div th:if="${exchange.completedAt == null && currentUser == exchange.ownerUsername}" class="complete-form">
+            <h3>Завершить обмен</h3>
+            <form th:action="@{/exchanges/{id}/complete(id=${exchange.id})}" method="post" class="form">
+                <div class="gruppa-polya">
+                    <label for="notes">Заметки (необязательно)</label>
+                    <textarea id="notes" name="notes" class="pole-vvoda" rows="3"></textarea>
+                </div>
+                <button type="submit" class="knopka knopka-osnovnaya">Отметить как завершённый</button>
+            </form>
+        </div>
+
+        <section th:if="${exchange.completedAt != null}">
+            <h3>Отзывы</h3>
+            <div th:if="${!reviews.isEmpty()}" class="reviews-list">
+                <div th:each="review : ${reviews}" class="review-card">
+                    <div class="review-header">
+                        <span ss:rating-stars="${review.rating}">Рейтинг</span>
+                        <span class="review-author">от <span th:text="${review.author.username}">автор</span></span>
+                    </div>
+                    <p th:if="${review.comment}" th:text="${review.comment}"></p>
+                </div>
+            </div>
+
+            <div class="review-form-section">
+                <h4>Оставить отзыв</h4>
+                <form th:action="@{/exchanges/{id}/review(id=${exchange.id})}" method="post" class="form">
+                    <input type="hidden" name="targetUserId" th:value="${targetUserId}"/>
+                    <div class="gruppa-polya">
+                        <label>Оценка</label>
+                        <div class="star-input">
+                            <input type="radio" name="rating" value="5" id="r5"/><label for="r5">&#9733;</label>
+                            <input type="radio" name="rating" value="4" id="r4"/><label for="r4">&#9733;</label>
+                            <input type="radio" name="rating" value="3" id="r3"/><label for="r3">&#9733;</label>
+                            <input type="radio" name="rating" value="2" id="r2"/><label for="r2">&#9733;</label>
+                            <input type="radio" name="rating" value="1" id="r1"/><label for="r1">&#9733;</label>
+                        </div>
+                    </div>
+                    <div class="gruppa-polya">
+                        <label for="comment">Комментарий</label>
+                        <textarea id="comment" name="comment" class="pole-vvoda" rows="3"></textarea>
+                    </div>
+                    <button type="submit" class="knopka knopka-osnovnaya">Отправить отзыв</button>
+                </form>
+            </div>
+        </section>
+    </div>
+</section>
+</body>
+</html>

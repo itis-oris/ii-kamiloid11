@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      xmlns:ss="http://www.skillswap.com/dialect"
+      layout:decorate="~{layout/main}">
+<head><title th:text="${offer.title}">Детали объявления</title></head>
+<body>
+<section layout:fragment="content">
+    <article class="offer-detail">
+        <div class="offer-detail-header">
+            <div>
+                <h1 th:text="${offer.title}">Заголовок</h1>
+                <div class="offer-badges">
+                    <span class="metka" th:text="${offer.skillCategory}" th:classappend="${'badge-' + offer.skillCategory.toLowerCase()}"></span>
+                    <span class="metka badge-level" th:text="${offer.skillLevel}"></span>
+                    <span class="metka badge-skill" th:text="${offer.skillTitle}"></span>
+                </div>
+            </div>
+            <div class="offer-detail-actions" sec:authorize="isAuthenticated()"
+                 th:if="${#authentication.name == offer.ownerUsername}">
+                <a th:href="@{/offers/{id}/edit(id=${offer.id})}" class="knopka knopka-konturnaya"
+                   data-skillswap-action="edit-offer" aria-label="Редактировать объявление">Редактировать</a>
+                <button class="knopka knopka-opasnaya" onclick="confirmDelete(this)"
+                        data-skillswap-action="delete-offer"
+                        aria-label="Удалить объявление"
+                        th:data-offer-id="${offer.id}">Удалить</button>
+            </div>
+        </div>
+
+        <div class="offer-detail-body">
+            <div class="offer-description">
+                <h3>Описание</h3>
+                <p th:text="${offer.description}">Текст описания</p>
+            </div>
+
+            <aside class="offer-sidebar">
+                <div class="sidebar-card">
+                    <h4>Параметры занятия</h4>
+                    <dl>
+                        <dt>Длительность</dt>
+                        <dd th:text="${offer.hoursPerSession} + ' ч'">1 ч</dd>
+                        <dt>Макс. учеников</dt>
+                        <dd th:text="${offer.maxStudents}">1</dd>
+                        <dt th:if="${offer.hourlyRate != null}">Ставка</dt>
+                        <dd th:if="${offer.hourlyRate != null}">
+                            <span th:text="${offer.hourlyRate}">0</span>
+                            <span th:text="${offer.rateCurrency}">EUR</span>/час
+                        </dd>
+                    </dl>
+
+                    <div th:if="${offer.hourlyRate != null}" class="currency-converter">
+                        <h4>Конвертировать цену</h4>
+                        <div class="converter-row">
+                            <select id="targetCurrency" class="pole-vvoda">
+                                <option value="USD">USD</option>
+                                <option value="GBP">GBP</option>
+                                <option value="RUB">RUB</option>
+                                <option value="JPY">JPY</option>
+                                <option value="CNY">CNY</option>
+                                <option value="KZT">KZT</option>
+                            </select>
+                            <button class="knopka knopka-malaya knopka-osnovnaya" onclick="convertCurrency()"
+                                    data-skillswap-action="convert-currency"
+                                    aria-label="Перевести стоимость в выбранную валюту"
+                                    th:data-amount="${offer.hourlyRate}"
+                                    th:data-from="${offer.rateCurrency}">Перевести</button>
+                        </div>
+                        <div id="conversionResult" class="conversion-result" style="display:none"></div>
+                    </div>
+                </div>
+
+                <div class="sidebar-card">
+                    <h4>Преподаватель</h4>
+                    <a th:href="@{/profile/{u}(u=${offer.ownerUsername})}" th:text="${offer.ownerUsername}">автор</a>
+                    <div ss:rating-stars="${offer.ownerRating}">Рейтинг</div>
+                </div>
+
+                <div class="sidebar-card" sec:authorize="isAuthenticated()"
+                     th:if="${#authentication.name != offer.ownerUsername}">
+                    <h4>Интересно?</h4>
+                    <div id="exchangeRequestForm">
+                        <textarea id="requestMessage" class="pole-vvoda" rows="3"
+                                  placeholder="Расскажите, чему вы можете научить взамен..."></textarea>
+                        <button class="knopka knopka-osnovnaya knopka-shirokaya" style="margin-top: 0.5rem"
+                                onclick="sendExchangeRequest(this)"
+                                data-skillswap-action="send-exchange-request"
+                                aria-label="Отправить владельцу заявку на обмен"
+                                th:data-offer-id="${offer.id}">Отправить заявку на обмен</button>
+                        <div id="requestResult" class="request-result" style="display:none"></div>
+                    </div>
+                </div>
+            </aside>
+        </div>
+    </article>
+
+    <form id="deleteForm" th:action="@{/offers/{id}/delete(id=${offer.id})}" method="post" style="display:none"></form>
+</section>
+
+<script layout:fragment="scripts" th:inline="javascript">
+    function confirmDelete(knopka) {
+        if (confirm('Точно удалить это объявление?')) {
+            document.getElementById('deleteForm').submit();
+        }
+    }
+
+    function convertCurrency() {
+        var knopka = document.querySelector('[onclick="convertCurrency()"]');
+        var amount = knopka.getAttribute('data-amount');
+        var from = knopka.getAttribute('data-from');
+        var to = document.getElementById('targetCurrency').value;
+        var resultDiv = document.getElementById('conversionResult');
+
+        fetch('/api/currency/convert?amount=' + amount + '&from=' + from + '&to=' + to, {
+            headers: {'Accept': 'application/json', 'X-Requested-With': 'XMLHttpRequest'}
+        })
+        .then(function(resp) { return resp.json(); })
+        .then(function(data) {
+            resultDiv.style.display = 'block';
+            resultDiv.textContent = amount + ' ' + from + ' = ' + data.result + ' ' + to;
+            resultDiv.className = 'conversion-result success';
+        })
+        .catch(function(err) {
+            resultDiv.style.display = 'block';
+            resultDiv.textContent = 'Не удалось выполнить конвертацию. Попробуйте позже.';
+            resultDiv.className = 'conversion-result error';
+        });
+    }
+
+    function sendExchangeRequest(knopka) {
+        var offerId = knopka.getAttribute('data-offer-id');
+        var message = document.getElementById('requestMessage').value;
+        var resultDiv = document.getElementById('requestResult');
+        var csrfToken = document.querySelector('meta[name="_csrf"]').getAttribute('content');
+        var csrfHeader = document.querySelector('meta[name="_csrf_header"]').getAttribute('content');
+
+        var headers = {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+            'X-Requested-With': 'XMLHttpRequest'
+        };
+        headers[csrfHeader] = csrfToken;
+
+        fetch('/api/exchanges/request', {
+            method: 'POST',
+            headers: headers,
+            body: JSON.stringify({ offerId: parseInt(offerId), message: message })
+        })
+        .then(function(resp) { return resp.json().then(function(data) { return {ok: resp.ok, data: data}; }); })
+        .then(function(result) {
+            resultDiv.style.display = 'block';
+            if (result.ok) {
+                resultDiv.textContent = 'Заявка успешно отправлена!';
+                resultDiv.className = 'request-result success';
+                knopka.disabled = true;
+                knopka.textContent = 'Заявка отправлена';
+            } else {
+                resultDiv.textContent = result.data.message || 'Не удалось отправить заявку.';
+                resultDiv.className = 'request-result error';
+            }
+        })
+        .catch(function(err) {
+            resultDiv.style.display = 'block';
+            resultDiv.textContent = 'Ошибка сети. Повторите попытку.';
+            resultDiv.className = 'request-result error';
+        });
+    }
+</script>
+</body>
+</html>
